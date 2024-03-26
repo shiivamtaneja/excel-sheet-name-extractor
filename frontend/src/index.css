@@ -1,0 +1,33 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.main-container,
+.container,
+.form {
+  display: flex;
+}
+
+.main-container,
+.container {
+  justify-content: center;
+  align-items: center;
+}
+
+.main-container {
+  min-height: 100vh;
+}
+
+.container,
+.form {
+  flex-direction: column;
+  gap: 24px;
+}
+
+.form {
+  border: 0.5px solid black;
+  border-radius: 12px;
+  padding: 10px 10px;
+}
