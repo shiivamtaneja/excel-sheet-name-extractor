@@ -2,7 +2,8 @@ const xlsx = require('xlsx');
 const multipart = require('lambda-multipart-parser');
 
 const allowedOrigins = [
-  "http://localhost:[0-9]*"
+  "http://localhost:[0-9]*",
+  "https://excel-sheet-name-extractor.vercel.app"
 ];
 
 exports.handler = async (event) => {
