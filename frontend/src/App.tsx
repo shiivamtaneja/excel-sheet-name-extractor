@@ -1,7 +1,21 @@
+import axios from "axios";
+
 import { SubmitHandler, useForm } from "react-hook-form";
 
+import { saveAs } from 'file-saver';
+
 type Inputs = {
-  selectedFile: File
+  selectedFiles: FileList
+}
+
+function formatData(data: { fileName: string, sheets: string[] }[]) {
+  let formattedData = '';
+  
+  data.forEach(item => {
+    formattedData += `Filename - ${item.fileName}\nSheets - ${item.sheets.join(', ')}\n______\n\n`;
+  });
+  
+  return formattedData;
 }
 
 function App() {
@@ -11,21 +25,23 @@ function App() {
     try {
       const BASE_URL = import.meta.env.VITE_APP_API_GATEWAY;
 
-      const response = await fetch(BASE_URL, {
-        method: "POST",
-        body: JSON.stringify({
-          files: data.selectedFile
-        })
-      })
+      const response = await axios.post(BASE_URL, { files: data.selectedFiles }, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      });
 
-      if (response.ok) {
-        const responseData = await response.json()
+      if (response.status === 200) {
+        const data = response.data;
 
-        console.log(responseData)
+        const formattedText = formatData(data.data);
+
+        const blob = new Blob([formattedText], { type: 'text/plain' });
+
+        saveAs(blob, `data.txt`);
       }
-
     } catch (error) {
-      console.error(error)
+      console.error(error);
     }
   };
 
@@ -33,9 +49,9 @@ function App() {
     <section className="main-container">
       <form onSubmit={handleSubmit(onSubmit)} className="form">
         <label className="container">
-          <h1>Upload Excel File here</h1>
-          <input type="file" accept=".xlsx" {...register('selectedFile', { required: true })} />
-          {errors.selectedFile && <span>File is required</span>}
+          <h1>Upload Excel Files here</h1>
+          <input type="file" accept=".xlsx" {...register('selectedFiles', { required: true })} multiple />
+          {errors.selectedFiles && <span>File is required</span>}
         </label>
 
         <input type="submit" />
